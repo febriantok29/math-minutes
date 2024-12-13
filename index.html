@@ -20,14 +20,15 @@
         white-space: nowrap;
         display: flex;
         flex-direction: column;
-        align-items: flex-end;
+        align-items: center;
         gap: 5px;
       }
       .question .line {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        width: 10%;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
         border-top: 2px solid black;
         margin-top: 5px;
       }
@@ -55,6 +56,7 @@
       <div class="question" id="question">
         <div id="num1"></div>
         <div id="num2"></div>
+        <div id="num3" style="display: none"></div>
         <div class="line">
           <div id="operation"></div>
         </div>
@@ -84,43 +86,49 @@
 
       // Function to generate a new question
       function generateQuestion() {
-        let num1, num2;
+        let num1, num2, num3;
         let operation;
         let correctAnswer;
 
         if (difficulty <= 10) {
           // Level 1-10: Two numbers, one in tens and one in units
-          num1 = randomInRange(1, 99);
-          num2 = randomInRange(1, 49);
+          num1 = randomInRange(10, 99);
+          num2 = randomInRange(1, 9);
           operation = "+";
           correctAnswer = num1 + num2;
+          document.getElementById("num3").style.display = "none";
         } else if (difficulty <= 20) {
           // Level 11-20: Two numbers in tens
           num1 = randomInRange(10, 99);
           num2 = randomInRange(10, 99);
           operation = "-";
           correctAnswer = num1 - num2;
+          document.getElementById("num3").style.display = "none";
         } else {
-          // Higher difficulty: Mixed complexity
+          // Higher difficulty: Three numbers with mixed operations
           const operations = ["+", "-", "*", "/"];
           operation = operations[Math.floor(Math.random() * operations.length)];
           num1 = randomInRange(100, 999);
           num2 = randomInRange(10, 99);
+          num3 = randomInRange(10, 99);
+          document.getElementById("num3").style.display = "block";
           if (operation === "/") {
             num1 = num1 - (num1 % num2); // Ensure divisibility
-            correctAnswer = num1 / num2;
+            correctAnswer = num1 / num2 + num3;
           } else if (operation === "*") {
-            correctAnswer = num1 * num2;
+            correctAnswer = num1 * num2 + num3;
           } else {
-            correctAnswer = eval(`${num1} ${operation} ${num2}`);
+            correctAnswer = eval(`${num1} ${operation} ${num2} + ${num3}`);
           }
         }
 
-        currentQuestion = { num1, num2, operation, correctAnswer };
+        currentQuestion = { num1, num2, num3, operation, correctAnswer };
 
         // Update the UI
         document.getElementById("num1").textContent = num1;
         document.getElementById("num2").textContent = num2;
+        if (num3 !== undefined)
+          document.getElementById("num3").textContent = num3;
         document.getElementById("operation").textContent = operation;
       }
 
